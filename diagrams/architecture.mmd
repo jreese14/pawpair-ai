@@ -1,0 +1,37 @@
+flowchart TD
+    subgraph Browser["Browser"]
+        User(["User"])
+        QuizForm["Quiz Form (React)"]
+        ResultsPage["Results Page (React)"]
+        LocalStorage[("localStorage (favorites)")]
+    end
+
+    subgraph Backend["FastAPI Backend"]
+        API["main.py (CORS + routes)"]
+        Engine["RecommendationEngine"]
+        Repo["PetRepository"]
+        RAG["RAGService"]
+    end
+
+    subgraph External["Data and External Services"]
+        PetsJSON[("pets.json")]
+        LLM["LLM Provider API"]
+    end
+
+    User --> QuizForm
+    QuizForm -- "POST /recommendations" --> API
+    API --> Engine
+    Engine --> Repo
+    Repo --> PetsJSON
+    Engine -- "sorted PetMatch list" --> API
+    API -- "JSON response" --> ResultsPage
+    ResultsPage --> User
+
+    ResultsPage -- "expand card: POST /pets/id/explanation" --> API
+    API --> RAG
+    RAG -- "prompt" --> LLM
+    LLM -- "generated text" --> RAG
+    RAG -- "explanation string" --> API
+    API -- "JSON response" --> ResultsPage
+
+    ResultsPage -- "save or remove favorite" --> LocalStorage

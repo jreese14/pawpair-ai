@@ -1,0 +1,76 @@
+classDiagram
+    direction LR
+
+    class Quiz {
+        -Map responses
+        +createAdopterProfile() : AdopterProfile
+    }
+
+    class AdopterProfile {
+        +SpeciesPreference preferredSpecies
+        +HousingType housingType
+        +ActivityLevel activityLevel
+        +AvailableTime availableTime
+        +ExperienceLevel experienceLevel
+        +Trait[] preferredTraits
+        +HouseholdMember[] household
+        +String priority
+    }
+
+    class RecommendationEngine {
+        +isEligible(profile: AdopterProfile, pet: Pet) : boolean
+        +calculateScore(profile: AdopterProfile, pet: Pet) : float
+        +generateMatches(profile: AdopterProfile, pets: Pet[]) : PetMatch[]
+    }
+
+    class PetRepository {
+        -Pet[] pets
+        +getAll() : Pet[]
+        +getById(petId: int) : Pet
+    }
+
+    class Pet {
+        +int id
+        +String name
+        +Species species
+        +String breed
+        +int age
+        +ActivityLevel energyLevel
+        +boolean apartmentFriendly
+        +ExperienceLevel experienceRequired
+        +Trait[] personalityTraits
+        +boolean goodWithChildren
+        +boolean goodWithDogs
+        +boolean goodWithCats
+        +String notes
+    }
+
+    class PetMatch {
+        +Pet pet
+        +float compatibilityScore
+        +Trait[] matchedTraits
+    }
+
+    class RAGService {
+        +generateExplanation(profile: AdopterProfile, pet: Pet, score: float, matchedTraits: Trait[]) : String
+        +generateDayInTheLife(profile: AdopterProfile, pet: Pet) : DayInTheLife
+    }
+
+    class DayInTheLife {
+        +int petId
+        +String summary
+        +CareActivity[] activities
+    }
+
+    class CareActivity {
+        +String timeOfDay
+        +String title
+        +String description
+    }
+
+    Quiz --> AdopterProfile : creates
+    RecommendationEngine --> PetMatch : creates ranked matches
+    PetRepository --> Pet : loads
+    PetMatch --> Pet : contains
+    RAGService --> DayInTheLife : generates
+    DayInTheLife *-- CareActivity : contains
