@@ -6,6 +6,11 @@ class Species(str, Enum):
     CAT = "Cat"
 
 
+class Gender(str, Enum):
+    MALE = "Male"
+    FEMALE = "Female"
+
+
 class SpeciesPreference(str, Enum):
     DOG = "Dog"
     CAT = "Cat"

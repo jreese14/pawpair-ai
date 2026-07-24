@@ -1,12 +1,13 @@
 from pydantic import BaseModel
 
-from app.enums import ActivityLevel, ExperienceLevel, Species, Trait
+from app.enums import ActivityLevel, ExperienceLevel, Gender, Species, Trait
 
 
 class Pet(BaseModel):
     id: int
     name: str
     species: Species
+    gender: Gender
     breed: str
     age: int
     energy_level: ActivityLevel
