@@ -22,6 +22,13 @@ class HousingType(str, Enum):
     HOUSE = "House"
 
 
+class AgePreference(str, Enum):
+    YOUNG = "Young"
+    ADULT = "Adult"
+    SENIOR = "Senior"
+    NO_PREFERENCE = "No Preference"
+
+
 class ActivityLevel(str, Enum):
     LOW = "Low"
     MODERATE = "Moderate"

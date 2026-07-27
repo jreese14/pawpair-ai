@@ -1,6 +1,17 @@
 from pydantic import BaseModel
 
-from app.enums import ActivityLevel, ExperienceLevel, Gender, Species, Trait
+from app.enums import (
+    ActivityLevel,
+    AgePreference,
+    AvailableTime,
+    ExperienceLevel,
+    Gender,
+    HouseholdMember,
+    HousingType,
+    Species,
+    SpeciesPreference,
+    Trait,
+)
 
 
 class Pet(BaseModel):
@@ -18,3 +29,15 @@ class Pet(BaseModel):
     good_with_dogs: bool
     good_with_cats: bool
     notes: str
+
+
+class AdopterProfile(BaseModel):
+    name: str
+    preferred_species: SpeciesPreference
+    preferred_age: AgePreference
+    housing_type: HousingType
+    activity_level: ActivityLevel
+    available_time: AvailableTime
+    experience_level: ExperienceLevel
+    preferred_traits: list[Trait]
+    household: list[HouseholdMember]
