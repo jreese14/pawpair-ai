@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { getHealth, getPets } from './services/api'
 import './App.css'
+import QuizForm from './components/QuizForm'
 
 function App() {
   const [status, setStatus] = useState('Checking backend connection...')
@@ -33,6 +34,7 @@ function App() {
           </li>
         ))}
       </ul>
+      <QuizForm />
     </div>
   )
 }
