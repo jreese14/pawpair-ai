@@ -1,8 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app import match_engine
 from app.pet_repository import PetRepository
-from app.schemas import AdopterProfile, Pet
+from app.schemas import AdopterProfile, Pet, PetMatch
 
 app = FastAPI()
 
@@ -27,7 +28,7 @@ def get_pets() -> list[Pet]:
 
 
 @app.post("/matches")
-def get_matches(profile: AdopterProfile) -> list[Pet]:
-    return pet_repository.get_all()[:3]
+def get_matches(profile: AdopterProfile) -> list[PetMatch]:
+    return match_engine.get_matches(profile, pet_repository.get_all())
 
 

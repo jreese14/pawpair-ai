@@ -41,3 +41,9 @@ class AdopterProfile(BaseModel):
     experience_level: ExperienceLevel
     preferred_traits: list[Trait]
     household: list[HouseholdMember]
+
+
+class PetMatch(BaseModel):
+    pet: Pet
+    score: float
+    matched_traits: list[Trait]
