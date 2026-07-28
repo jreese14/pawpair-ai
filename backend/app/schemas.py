@@ -17,6 +17,7 @@ from app.enums import (
 class Pet(BaseModel):
     id: int
     name: str
+    pet_image: str = "https://picsum.photos/300/300"
     species: Species
     gender: Gender
     breed: str
