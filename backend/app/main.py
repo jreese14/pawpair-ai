@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.pet_repository import PetRepository
-from app.schemas import Pet
+from app.schemas import AdopterProfile, Pet
 
 app = FastAPI()
 
@@ -24,5 +24,10 @@ def health_check():
 @app.get("/pets")
 def get_pets() -> list[Pet]:
     return pet_repository.get_all()
+
+
+@app.post("/matches")
+def get_matches(profile: AdopterProfile) -> list[Pet]:
+    return pet_repository.get_all()[:3]
 
 

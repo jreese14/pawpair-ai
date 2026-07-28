@@ -15,3 +15,17 @@ export async function getPets() {
   }
   return response.json()
 }
+
+export async function getMatches(profileData) {
+  const response = await fetch(`${API_BASE_URL}/matches`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(profileData),
+  })
+  if (!response.ok) {
+    throw new Error(`Fetching matches failed: ${response.status}`)
+  }
+  return response.json()
+}

@@ -9,6 +9,9 @@ import {
     HOUSEHOLD_MEMBER_OPTIONS,
     TRAIT_OPTIONS,
 } from '../constants/quizOptions';
+import { Quiz } from '../models/Quiz';
+import { getMatches } from '../services/api';
+
 
 
 function QuizForm() {
@@ -24,6 +27,14 @@ function QuizForm() {
         preferred_traits: [],
     });
     const [step, setStep] = useState(0);
+    const handleSubmit = () => {
+        console.log('Form submitted:', formState);
+        const quiz = new Quiz(formState);
+        const adopterProfile = quiz.createAdopterProfile();
+        getMatches(adopterProfile)
+        .then((matches) => console.log('Matches received:', matches))
+        .catch((error) => console.error('Error fetching matches:', error));
+    };
     return (
         <form>
 
@@ -72,7 +83,7 @@ function QuizForm() {
                 ))}
             </div>
             )}
-            {step === 3 && (<div> <h3>What is type of house do you live in?</h3>
+            {step === 3 && (<div> <h3>What type of home do you live in?</h3>
                 {HOUSING_TYPE_OPTIONS.map((option) => (
                     <div key={option}>
                         <label>
@@ -184,8 +195,15 @@ function QuizForm() {
                 ))}
             </div>
             )}
+            {step === 8 && (
+                <button type="button" onClick={handleSubmit}>
+                    Submit
+                </button>
+            )}
+            <br />
+            <br />
             <p>Step: {step}</p>
-            <button type="button" onClick={() => setStep(step + 1)}>
+            <button type="button" onClick={() => setStep(step + 1)} disabled={step === 8}>
                 Next
             </button>
             <button type="button" onClick={() => setStep(step - 1)} disabled={step === 0}>
