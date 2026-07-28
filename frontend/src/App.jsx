@@ -2,11 +2,18 @@ import { useEffect, useState } from 'react'
 import { getHealth, getPets } from './services/api'
 import './App.css'
 import QuizForm from './components/QuizForm'
+import Results from './components/Results'
+
 
 function App() {
   const [status, setStatus] = useState('Checking backend connection...')
   const [pets, setPets] = useState([])
   const [petsError, setPetsError] = useState(null)
+  const [matches, setMatches] = useState(null)
+
+  const handleMatchesReceived = (matches) => {
+    setMatches(matches)
+  }
 
   useEffect(() => {
     getHealth()
@@ -34,7 +41,11 @@ function App() {
           </li>
         ))}
       </ul>
-      <QuizForm />
+      {matches ? (
+        <Results matches={matches} />
+      ) : (
+        <QuizForm onMatchesReceived={handleMatchesReceived} />
+      )}
     </div>
   )
 }

@@ -14,7 +14,7 @@ import { getMatches } from '../services/api';
 
 
 
-function QuizForm() {
+function QuizForm({ onMatchesReceived }) {
     const [formState, setFormState] = useState({
         name: '',
         preferred_species: '',
@@ -32,7 +32,7 @@ function QuizForm() {
         const quiz = new Quiz(formState);
         const adopterProfile = quiz.createAdopterProfile();
         getMatches(adopterProfile)
-        .then((matches) => console.log('Matches received:', matches))
+        .then((matches) => onMatchesReceived(matches))
         .catch((error) => console.error('Error fetching matches:', error));
     };
     return (
