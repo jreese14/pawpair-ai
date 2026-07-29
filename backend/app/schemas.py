@@ -48,3 +48,10 @@ class PetMatch(BaseModel):
     pet: Pet
     score: float
     matched_traits: list[Trait]
+
+
+class ExplanationRequest(BaseModel):
+    adopter_profile: AdopterProfile
+    pet: Pet
+    matched_traits: list[Trait]
+    score: float

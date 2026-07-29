@@ -32,7 +32,7 @@ function QuizForm({ onMatchesReceived }) {
         const quiz = new Quiz(formState);
         const adopterProfile = quiz.createAdopterProfile();
         getMatches(adopterProfile)
-        .then((matches) => onMatchesReceived(matches))
+        .then((matches) => onMatchesReceived(matches, adopterProfile))
         .catch((error) => console.error('Error fetching matches:', error));
     };
     return (

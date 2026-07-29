@@ -10,9 +10,11 @@ function App() {
   const [pets, setPets] = useState([])
   const [petsError, setPetsError] = useState(null)
   const [matches, setMatches] = useState(null)
+  const [adopterProfile, setAdopterProfile] = useState(null)
 
-  const handleMatchesReceived = (matches) => {
+  const handleMatchesReceived = (matches, profile) => {
     setMatches(matches)
+    setAdopterProfile(profile)
   }
 
   useEffect(() => {
@@ -42,7 +44,7 @@ function App() {
         ))}
       </ul>
       {matches ? (
-        <Results matches={matches} />
+        <Results matches={matches} adopterProfile={adopterProfile} />
       ) : (
         <QuizForm onMatchesReceived={handleMatchesReceived} />
       )}
