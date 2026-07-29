@@ -3,9 +3,14 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app import match_engine
 from app.pet_repository import PetRepository
+from app.rag_service import RAGService
 from app.schemas import AdopterProfile, Pet, PetMatch
+from app.enums import Trait
+
+from app.rag_service import RAGService
 
 app = FastAPI()
+rag_service = RAGService()
 
 app.add_middleware(
     CORSMiddleware,
@@ -32,3 +37,10 @@ def get_matches(profile: AdopterProfile) -> list[PetMatch]:
     return match_engine.get_matches(profile, pet_repository.get_all())
 
 
+@app.post("/explanation")
+def get_explanation(adopter_profile: AdopterProfile, pet: Pet, matched_traits: list[Trait], score: float) -> dict:
+    rag_service = RAGService()
+    explanation = rag_service.generate_match_explanation(adopter_profile, pet, matched_traits, score)
+    return {"explanation": explanation}
+
+@
