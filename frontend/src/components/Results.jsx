@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import './Results.css';
 
-function Results({ matches, adopterProfile }) {
+function Results({ matches, adopterProfile, onRetakeQuiz }) {
     const [expandedId, setExpandedId] = useState(null);
     const [favoriteIds, setFavoriteIds] = useState(new Set());
 
@@ -66,6 +66,7 @@ function Results({ matches, adopterProfile }) {
             <div className="results-header">
                 <h1>Your Top {Math.min(matches.length, 5)} Pet Matches ✨</h1>
                 <p>These pets are the best matches for your lifestyle, based on your quiz responses.</p>
+                <button className="retake-btn" onClick={onRetakeQuiz}>Retake Quiz</button>
             </div>
 
             <div className="matches-grid">

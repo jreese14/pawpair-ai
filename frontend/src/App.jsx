@@ -1,14 +1,11 @@
-import { useEffect, useState } from 'react'
-import { getHealth, getPets } from './services/api'
+import { useState } from 'react'
 import './App.css'
 import QuizForm from './components/QuizForm'
 import Results from './components/Results'
+import logo from './assets/logo.svg'
 
 
 function App() {
-  const [status, setStatus] = useState('Checking backend connection...')
-  const [pets, setPets] = useState([])
-  const [petsError, setPetsError] = useState(null)
   const [matches, setMatches] = useState(null)
   const [adopterProfile, setAdopterProfile] = useState(null)
 
@@ -17,34 +14,19 @@ function App() {
     setAdopterProfile(profile)
   }
 
-  useEffect(() => {
-    getHealth()
-      .then((data) => setStatus(data.message))
-      .catch(() => setStatus('Could not reach the backend.'))
-
-    getPets()
-      .then((data) => setPets(data))
-      .catch(() => setPetsError('Could not load pets.'))
-  }, [])
+  const handleRetakeQuiz = () => {
+    setMatches(null)
+    setAdopterProfile(null)
+  }
 
   return (
     <div>
-      <h1>PawPair</h1>
-      <h2>Backend Health Check</h2>
-      <p>{status}</p>
-
-      <h2>GET /pets Check</h2>
-      {petsError && <p>{petsError}</p>}
-      {!petsError && <p>{pets.length} pets loaded</p>}
-      <ul>
-        {pets.map((pet) => (
-          <li key={pet.id}>
-            {pet.name} — {pet.breed}
-          </li>
-        ))}
-      </ul>
+      <h1>
+        <img src={logo} alt="PawPair logo" className="logo" />
+        PawPair
+      </h1>
       {matches ? (
-        <Results matches={matches} adopterProfile={adopterProfile} />
+        <Results matches={matches} adopterProfile={adopterProfile} onRetakeQuiz={handleRetakeQuiz} />
       ) : (
         <QuizForm onMatchesReceived={handleMatchesReceived} />
       )}
