@@ -33,6 +33,12 @@ def is_eligible(
     pet: Pet,
 ) -> bool:
     if (
+        profile.preferred_species != SpeciesPreference.NO_PREFERENCE
+        and profile.preferred_species.value != pet.species.value
+    ):
+        return False
+
+    if (
         profile.housing_type == HousingType.APARTMENT
         and not pet.apartment_friendly
     ):
@@ -59,19 +65,6 @@ def is_eligible(
     return True
 
 
-def calculate_species_score(
-    profile: AdopterProfile,
-    pet: Pet,
-) -> float:
-    if profile.preferred_species == SpeciesPreference.NO_PREFERENCE:
-        return 20.0
-
-    if profile.preferred_species.value == pet.species.value:
-        return 20.0
-
-    return 0.0
-
-
 def get_age_bucket(age: int) -> AgePreference:
     # Young: 0-2, Adult: 3-7, Senior: 8+
     if age <= 2:
@@ -88,7 +81,7 @@ def calculate_age_score(
     pet: Pet,
 ) -> float:
     if profile.preferred_age == AgePreference.NO_PREFERENCE:
-        return 20.0
+        return 25.0
 
     adopter_level = AGE_LEVELS[profile.preferred_age]
     pet_level = AGE_LEVELS[get_age_bucket(pet.age)]
@@ -96,10 +89,10 @@ def calculate_age_score(
     difference = abs(adopter_level - pet_level)
 
     if difference == 0:
-        return 20.0
+        return 25.0
 
     if difference == 1:
-        return 10.0
+        return 12.5
 
     return 0.0
 
@@ -114,10 +107,10 @@ def calculate_activity_score(
     difference = abs(adopter_level - pet_level)
 
     if difference == 0:
-        return 20.0
+        return 25.0
 
     if difference == 1:
-        return 10.0
+        return 12.5
 
     return 0.0
 
@@ -132,10 +125,10 @@ def calculate_experience_score(
     difference = adopter_level - required_level
 
     if difference >= 0:
-        return 20.0
+        return 25.0
 
     if difference == -1:
-        return 10.0
+        return 12.5
 
     return 0.0
 
@@ -158,7 +151,7 @@ def calculate_trait_score(
     pet: Pet,
 ) -> float:
     if not profile.preferred_traits:
-        return 20.0
+        return 25.0
 
     matched_traits = get_matched_traits(profile, pet)
 
@@ -167,7 +160,7 @@ def calculate_trait_score(
         / len(set(profile.preferred_traits))
     )
 
-    return round(match_ratio * 20, 1)
+    return round(match_ratio * 25, 1)
 
 
 def calculate_score(
@@ -175,8 +168,7 @@ def calculate_score(
     pet: Pet,
 ) -> float:
     total = (
-        calculate_species_score(profile, pet)
-        + calculate_age_score(profile, pet)
+        calculate_age_score(profile, pet)
         + calculate_activity_score(profile, pet)
         + calculate_experience_score(profile, pet)
         + calculate_trait_score(profile, pet)

@@ -3,7 +3,6 @@ import './Results.css';
 
 function Results({ matches, adopterProfile, onRetakeQuiz }) {
     const [expandedId, setExpandedId] = useState(null);
-    const [favoriteIds, setFavoriteIds] = useState(new Set());
 
     const [loadingId, setLoadingId] = useState(null);
     const [explanations, setExplanations] = useState({});
@@ -51,16 +50,6 @@ function Results({ matches, adopterProfile, onRetakeQuiz }) {
         setExpandedId(expandedId === petId ? null : petId);
     };
 
-    const toggleFavorite = (petId) => {
-        const newFavorites = new Set(favoriteIds);
-        if (newFavorites.has(petId)) {
-            newFavorites.delete(petId);
-        } else {
-            newFavorites.add(petId);
-        }
-        setFavoriteIds(newFavorites);
-    };
-
     return (
         <div className="results-container">
             <div className="results-header">
@@ -88,15 +77,6 @@ function Results({ matches, adopterProfile, onRetakeQuiz }) {
                             <div className="score-badge">
                                 {Math.round(match.score)}% Match
                             </div>
-
-                            {/* Favorite button */}
-                            <button
-                                className={`favorite-btn ${favoriteIds.has(match.pet.id) ? 'favorited' : ''}`}
-                                onClick={() => toggleFavorite(match.pet.id)}
-                                title="Save to favorites"
-                            >
-                                {favoriteIds.has(match.pet.id) ? '♥' : '♡'}
-                            </button>
                         </div>
 
                         {/* Card footer */}
@@ -130,6 +110,12 @@ function Results({ matches, adopterProfile, onRetakeQuiz }) {
                                 {/* Household compatibility badges */}
                                 {match.pet.good_with_children && (
                                     <span className="trait-badge compat">👧 Good with kids</span>
+                                )}
+                                {match.pet.good_with_dogs && (
+                                    <span className="trait-badge compat">🐶 Good with dogs</span>
+                                )}
+                                {match.pet.good_with_cats && (
+                                    <span className="trait-badge compat">🐱 Good with cats</span>
                                 )}
                                 {match.pet.apartment_friendly && (
                                     <span className="trait-badge compat">🏢 Apartment friendly</span>
