@@ -67,7 +67,7 @@ function Results({ matches, adopterProfile, onRetakeQuiz }) {
                         {/* Pet image with score overlay */}
                         <div className="pet-image-container">
                             <img
-                                src={`https://picsum.photos/300/300?random=${match.pet.id}`}
+                                src={match.pet.pet_image}
                                 alt={match.pet.name}
                                 className="pet-image"
                                 onError={(e) => {
