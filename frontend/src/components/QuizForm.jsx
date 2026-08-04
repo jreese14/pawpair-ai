@@ -51,7 +51,16 @@ function QuizForm({ onMatchesReceived }) {
         .catch((error) => console.error('Error fetching matches:', error));
     };
     return (
-        <form>
+        <>
+            <div className="quiz-hero">
+                <div className="hero-content">
+                    <h1>Find your perfect 
+                        <br />
+                        <span className="highlight">pet match</span> with AI.</h1>
+                    <p>Take a short quiz about your lifestyle and preferences to get paired with your most compatible pet matches and learn why each one could be a great fit through personalized AI explanations.</p>
+                </div>
+            </div>
+            <form>
             <div className="step-counter">
                 <span className="step-number">{step + 1}</span>
                 <span> / 9</span>
@@ -254,6 +263,7 @@ function QuizForm({ onMatchesReceived }) {
                 )}
             </div>
         </form>
+        </>
     )
 
 }
