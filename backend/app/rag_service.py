@@ -11,7 +11,7 @@ class RAGService:
         self.client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
     def generate_match_explanation(self, adopter_profile: AdopterProfile, pet: Pet, matched_traits: list[Trait], score: float) -> str:
-        prompt = f"""You are a warm and helpful pet adoption advisor. Explain to {adopter_profile.name} why {pet.name} would be a great match for them.
+        prompt = f"""You are a helpful pet adoption advisor. Explain to {adopter_profile.name} how compatible they are with {pet.name}.
         
         Adopter Profile:
         - Name: {adopter_profile.name}
@@ -35,23 +35,21 @@ class RAGService:
         Compatibility score: {score}%
         
         Guidelines:
-        1. Use simple, everyday language — no technical jargon
-        2. Be warm and encouraging, like talking to a friend
-        3. Explain WHY these factors work well together in plain terms
-        4. Be concise but detailed — 2-3 sentences that actually explain the match
-        5. Mention specific traits and why they matter for their lifestyle
-        6. Note any important care needs they should know about
+        1. Keep it brief — 1-2 sentences maximum
+        2. Be honest and match the tone to the compatibility score (high scores: positive; low scores: realistic)
+        3. Explain WHY based on specific factors (activity, experience, traits)
+        4. Mention specific traits and why they matter for their lifestyle
+        5. Note any important care needs they should know about
+        6. Use simple, everyday language — no technical jargon
         7. Focus on insight, not just repeating facts
-        8. Do NOT mention scores, algorithms, or technical details
-        9. Do NOT claim guaranteed success or invent pet facts
-        10. Do NOT suggest changing the compatibility score
+        8. Do NOT mention scores, algorithms, or invent pet facts
         
-        Write a warm, conversational explanation of why this is a good match:"""
+        Write a brief, honest explanation of why this pet might be a match:"""
 
         response = self.client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=300,
+            max_tokens=150,
             temperature=0.7,
         )
 
