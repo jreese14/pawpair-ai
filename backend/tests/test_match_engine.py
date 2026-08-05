@@ -15,7 +15,6 @@ from app.match_engine import (
     calculate_age_score,
     calculate_experience_score,
     calculate_score,
-    calculate_species_score,
     calculate_trait_score,
     get_age_bucket,
     get_matched_traits,
@@ -45,6 +44,7 @@ def make_pet(**overrides):
     defaults = dict(
         id=1,
         name="Test Pet",
+        pet_image="/images/test.jpg",
         species=Species.DOG,
         gender=Gender.MALE,
         breed="Mixed",
@@ -133,27 +133,6 @@ def test_pet_satisfying_every_hard_filter_is_eligible():
     assert is_eligible(profile, pet) is True
 
 
-# --- species scoring ---
-
-
-def test_species_no_preference_scores_full_regardless_of_species():
-    profile = make_profile(preferred_species=SpeciesPreference.NO_PREFERENCE)
-    pet = make_pet(species=Species.CAT)
-    assert calculate_species_score(profile, pet) == 20.0
-
-
-def test_species_exact_match_scores_full():
-    profile = make_profile(preferred_species=SpeciesPreference.DOG)
-    pet = make_pet(species=Species.DOG)
-    assert calculate_species_score(profile, pet) == 20.0
-
-
-def test_species_mismatch_scores_zero():
-    profile = make_profile(preferred_species=SpeciesPreference.DOG)
-    pet = make_pet(species=Species.CAT)
-    assert calculate_species_score(profile, pet) == 0.0
-
-
 # --- age bucketing ---
 
 
@@ -172,19 +151,19 @@ def test_age_bucket_boundaries():
 def test_age_no_preference_scores_full_regardless_of_pet_age():
     profile = make_profile(preferred_age=AgePreference.NO_PREFERENCE)
     pet = make_pet(age=12)
-    assert calculate_age_score(profile, pet) == 20.0
+    assert calculate_age_score(profile, pet) == 25.0
 
 
 def test_age_exact_bucket_match_scores_full():
     profile = make_profile(preferred_age=AgePreference.YOUNG)
     pet = make_pet(age=1)
-    assert calculate_age_score(profile, pet) == 20.0
+    assert calculate_age_score(profile, pet) == 25.0
 
 
 def test_age_one_bucket_apart_scores_half():
     profile = make_profile(preferred_age=AgePreference.YOUNG)
     pet = make_pet(age=5)
-    assert calculate_age_score(profile, pet) == 10.0
+    assert calculate_age_score(profile, pet) == 12.5
 
 
 def test_age_two_buckets_apart_scores_zero():
@@ -199,13 +178,13 @@ def test_age_two_buckets_apart_scores_zero():
 def test_activity_exact_match_scores_full():
     profile = make_profile(activity_level=ActivityLevel.HIGH)
     pet = make_pet(energy_level=ActivityLevel.HIGH)
-    assert calculate_activity_score(profile, pet) == 20.0
+    assert calculate_activity_score(profile, pet) == 25.0
 
 
 def test_activity_one_level_apart_scores_half():
     profile = make_profile(activity_level=ActivityLevel.MODERATE)
     pet = make_pet(energy_level=ActivityLevel.HIGH)
-    assert calculate_activity_score(profile, pet) == 10.0
+    assert calculate_activity_score(profile, pet) == 12.5
 
 
 def test_activity_two_levels_apart_scores_zero():
@@ -220,19 +199,19 @@ def test_activity_two_levels_apart_scores_zero():
 def test_experience_exact_match_scores_full():
     profile = make_profile(experience_level=ExperienceLevel.INTERMEDIATE)
     pet = make_pet(experience_required=ExperienceLevel.INTERMEDIATE)
-    assert calculate_experience_score(profile, pet) == 20.0
+    assert calculate_experience_score(profile, pet) == 25.0
 
 
 def test_experience_adopter_above_requirement_still_scores_full():
     profile = make_profile(experience_level=ExperienceLevel.ADVANCED)
     pet = make_pet(experience_required=ExperienceLevel.BEGINNER)
-    assert calculate_experience_score(profile, pet) == 20.0
+    assert calculate_experience_score(profile, pet) == 25.0
 
 
 def test_experience_adopter_one_level_below_requirement_scores_half():
     profile = make_profile(experience_level=ExperienceLevel.INTERMEDIATE)
     pet = make_pet(experience_required=ExperienceLevel.ADVANCED)
-    assert calculate_experience_score(profile, pet) == 10.0
+    assert calculate_experience_score(profile, pet) == 12.5
 
 
 def test_experience_adopter_two_levels_below_requirement_scores_zero():
@@ -263,13 +242,13 @@ def test_get_matched_traits_returns_empty_when_no_overlap():
 def test_trait_score_empty_preference_scores_full():
     profile = make_profile(preferred_traits=[])
     pet = make_pet(personality_traits=[Trait.FRIENDLY])
-    assert calculate_trait_score(profile, pet) == 20.0
+    assert calculate_trait_score(profile, pet) == 25.0
 
 
 def test_trait_score_full_overlap_scores_full():
     profile = make_profile(preferred_traits=[Trait.FRIENDLY, Trait.PLAYFUL])
     pet = make_pet(personality_traits=[Trait.FRIENDLY, Trait.PLAYFUL])
-    assert calculate_trait_score(profile, pet) == 20.0
+    assert calculate_trait_score(profile, pet) == 25.0
 
 
 def test_trait_score_partial_overlap_is_proportional():
@@ -279,8 +258,8 @@ def test_trait_score_partial_overlap_is_proportional():
     pet = make_pet(
         personality_traits=[Trait.FRIENDLY, Trait.PLAYFUL, Trait.INDEPENDENT]
     )
-    # 2 of 3 preferred traits matched -> 2/3 * 20 = 13.3
-    assert calculate_trait_score(profile, pet) == 13.3
+    # 2 of 3 preferred traits matched -> 2/3 * 25 = 16.7
+    assert calculate_trait_score(profile, pet) == 16.7
 
 
 def test_trait_score_zero_overlap_scores_zero():
@@ -292,7 +271,7 @@ def test_trait_score_zero_overlap_scores_zero():
 def test_trait_score_duplicate_preferred_traits_do_not_inflate_denominator():
     profile = make_profile(preferred_traits=[Trait.FRIENDLY, Trait.FRIENDLY])
     pet = make_pet(personality_traits=[Trait.FRIENDLY])
-    assert calculate_trait_score(profile, pet) == 20.0
+    assert calculate_trait_score(profile, pet) == 25.0
 
 
 # --- total score ---
@@ -343,15 +322,14 @@ def test_total_score_sums_individual_category_scores():
         preferred_traits=[Trait.FRIENDLY, Trait.PLAYFUL, Trait.AFFECTIONATE],
     )
     pet = make_pet(
-        species=Species.CAT,
+        species=Species.DOG,
         age=5,
         energy_level=ActivityLevel.HIGH,
         experience_required=ExperienceLevel.INTERMEDIATE,
         personality_traits=[Trait.FRIENDLY, Trait.PLAYFUL, Trait.INDEPENDENT],
     )
     expected = (
-        calculate_species_score(profile, pet)
-        + calculate_age_score(profile, pet)
+        calculate_age_score(profile, pet)
         + calculate_activity_score(profile, pet)
         + calculate_experience_score(profile, pet)
         + calculate_trait_score(profile, pet)
@@ -392,7 +370,7 @@ def test_get_matches_sorts_by_score_descending():
     )
     exact_match = make_pet(id=1, species=Species.DOG, energy_level=ActivityLevel.HIGH)
     partial_match = make_pet(id=2, species=Species.DOG, energy_level=ActivityLevel.MODERATE)
-    worst_match = make_pet(id=3, species=Species.CAT, energy_level=ActivityLevel.LOW)
+    worst_match = make_pet(id=3, species=Species.DOG, energy_level=ActivityLevel.LOW)
 
     matches = get_matches(profile, [worst_match, exact_match, partial_match])
 
