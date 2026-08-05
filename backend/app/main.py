@@ -36,5 +36,5 @@ def get_matches(profile: AdopterProfile) -> list[PetMatch]:
 @app.post("/explanation")
 def get_explanation(request: ExplanationRequest) -> dict:
     rag_service = RAGService()
-    explanation = rag_service.generate_match_explanation(request.adopter_profile, request.pet, request.matched_traits, request.score)
+    explanation = rag_service.generate_match_explanation(request)
     return {"explanation": explanation}

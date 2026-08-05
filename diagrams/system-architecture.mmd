@@ -1,0 +1,47 @@
+graph TD
+    A["👤 User"] -->|"1. Fills Quiz<br/>Name, Species, Age, Housing,<br/>Experience, Activity, Time,<br/>Household, Traits"| B["Frontend: QuizForm"]
+
+    B -->|"2. Submit"| C["POST /matches"]
+    C -->|"3. Convert Responses"| D["Quiz → AdopterProfile"]
+    D --> E["Backend: Match Engine"]
+
+    E -->|"4a. Eligibility Filter"| F["Hard Filters:<br/>• Species<br/>• Housing<br/>• Household"]
+    F -->|"4b. Score Eligible Pets"| G["Score Categories:<br/>• Age: 25 pts<br/>• Activity: 25 pts<br/>• Experience: 25 pts<br/>• Traits: 25 pts"]
+
+    I["🗄️ Pet Data Source<br/>pets.json<br/>14 Pets with Images"] -->|"Load Pets"| E
+
+    G -->|"5. Rank and Return Top 5"| H["PetMatch Results<br/>Pet + Score +<br/>Matched Traits"]
+
+    H -->|"6. Display"| J["Frontend: Results"]
+    J -->|"User Reviews Match Cards"| K["👤 Human Review<br/>Does the ranking<br/>make sense?"]
+
+    K -->|"7. Expand 'Why this match?'<br/>Lazy-load Explanation"| L["POST /explanation"]
+
+    L -->|"8. Send Match Context"| M["RAG Service<br/>Receives:<br/>• AdopterProfile<br/>• Pet Record<br/>• Score %<br/>• Matched Traits"]
+
+    M -->|"9. Generate Grounded Prompt"| N["OpenAI GPT-4o-mini<br/>Score-Aware Tone:<br/>High ≥ 60%: Encouraging<br/>Low < 50%: Realistic"]
+    N -->|"Return Brief Explanation<br/>150-token limit"| M
+
+    M -->|"10. Return Explanation"| O["Frontend:<br/>Display Explanation"]
+    O -->|"User Reads"| P["👤 Human Evaluation<br/>Does the explanation<br/>match the score and pet data?"]
+
+    P -->|"Satisfied?"| Q{Decision}
+    Q -->|"Yes"| R["User Reviews or Saves<br/>Recommendation"]
+    Q -->|"No"| S["Retake Quiz"]
+    S --> A
+
+    T["🧪 Pytest Suite"] -->|"Validates:<br/>• Eligibility Logic<br/>• Score Calculation<br/>• Ranking Accuracy"| E
+
+    W["🤖 Manual Explanation Evaluation"] -->|"Checks:<br/>• Score-Tone Match<br/>• Token Limit<br/>• Grounding in Pet Data"| M
+
+    style A fill:#e1f5ff
+    style B fill:#f3e5f5
+    style E fill:#ffe0b2
+    style I fill:#c8e6c9
+    style M fill:#ffccbc
+    style N fill:#d1c4e9
+    style J fill:#f3e5f5
+    style K fill:#fff9c4
+    style P fill:#fff9c4
+    style T fill:#f1f8e9
+    style W fill:#f1f8e9

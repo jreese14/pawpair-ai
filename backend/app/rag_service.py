@@ -2,7 +2,7 @@ from openai import OpenAI
 import os
 from dotenv import load_dotenv
 
-from app.schemas import AdopterProfile, Pet
+from app.schemas import ExplanationRequest
 from app.enums import Trait
 
 class RAGService:
@@ -10,16 +10,21 @@ class RAGService:
         load_dotenv()
         self.client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-    def generate_match_explanation(self, adopter_profile: AdopterProfile, pet: Pet, matched_traits: list[Trait], score: float) -> str:
-        prompt = f"""You are a helpful pet adoption advisor. Explain to {adopter_profile.name} how compatible they are with {pet.name}.
-        
+    def generate_match_explanation(self, request: ExplanationRequest) -> str:
+        adopter = request.adopter_profile
+        pet = request.pet
+        matched_traits = request.matched_traits
+        score = request.score
+
+        prompt = f"""You are a helpful pet adoption advisor. Explain to {adopter.name} how compatible they are with {pet.name}.
+
         Adopter Profile:
-        - Name: {adopter_profile.name}
-        - Activity level: {adopter_profile.activity_level.value}
-        - Housing: {adopter_profile.housing_type.value}
-        - Experience with pets: {adopter_profile.experience_level.value}
-        - Household includes: {', '.join([h.value for h in adopter_profile.household]) if adopter_profile.household else 'Just adults'}
-        
+        - Name: {adopter.name}
+        - Activity level: {adopter.activity_level.value}
+        - Housing: {adopter.housing_type.value}
+        - Experience with pets: {adopter.experience_level.value}
+        - Household includes: {', '.join([h.value for h in adopter.household]) if adopter.household else 'Just adults'}
+
         Pet Details:
         - Name: {pet.name} ({pet.breed}, {pet.age} years old)
         - Energy level: {pet.energy_level.value}
@@ -30,7 +35,7 @@ class RAGService:
         - Good with cats: {pet.good_with_cats}
         - Personality traits: {', '.join([t.value for t in pet.personality_traits])}
         - Notes: {pet.notes}
-        
+
         {pet.name}'s personality traits you were looking for: {', '.join([t.value for t in matched_traits])}
         Compatibility score: {score}%
         
